@@ -2,13 +2,16 @@ const question = document.getElementById('question')
 const choices = Array.from(document.getElementsByClassName('choice-text'));
 const questionCounterText = document.getElementById('questionCounter')
 const scoreText = document.getElementById('score')
+const timerElement = document.getElementById('timer')
+const timerElementText = document.getElementById('timer')
 
 
 let currentQuestion = {}
 let acceptingAnswers = false
-let score = 0
+let score = 0 
 let questionCounter = 0
 let availableQuestions = []
+let seconds = 60; 
 
 //array and objects for questions and answers 
 
@@ -37,20 +40,56 @@ let questions = [
         choice3: "msg('Hello World');",
         choice4: "alert('Hello World');",
         answer: 4
-      }
+      },
+      { 
+        question:'What does JS stand for?',
+        choice1: 'Java Script',
+        choice2: 'June Sand',
+        choice3: 'Jquery',
+        choice4: 'Jumping Space Man',
+        answer: 1
+    },
+    {
+        question: 'Which of the following is true about variable naming conventions in JavaScript?',
+        choice1: 'You should not use any of the JavaScript reserved keyword as variable name.',
+        choice2: 'JavaScript variable names should not start with a numeral (0-9).',
+        choice3: 'Both of the Above',
+        choice4: 'None of the above',
+        answer: 3
+    },
+    {
+        question: 'Which of the following type of variable is visible everywhere in your JavaScript code?',
+        choice1: 'global variable',
+        choice2: 'local variable',
+        choice3: 'both of the above',
+        choice4: 'none of the above',
+        answer: 1
+    },
+    {
+        question: 'Which built-in method combines the text of two strings and returns a new string?',
+        choice1: 'append()',
+        choice2:  'concat()',
+        choice3:   'attach()',  
+        choice4:    'none of the above', 
+        answer: 2
+     
+    }
 ]
 
 
 const CORRECT_BONUS = 10 
-const MAX_QUESTIONS = 3 
+const MAX_QUESTIONS = 7
 const WRONG_BONUS = 7
+const MINUS_TIME = -7
 
 // sets the rules for starting the game
 startGame = () => {
     questionCounter = 0
-    score = 0 
+    score = 0
     availableQuestions = [...questions]
-    console.log(availableQuestions)
+    startTimer()
+   
+   
     getNewQuestion()  
 
 }
@@ -63,6 +102,7 @@ getNewQuestion = () => {
 
     // go to end page 
     return window.location.assign('end.html')
+    
     }
     // pulls questions randomly into the question section and updates question counter
     questionCounter++
@@ -83,7 +123,7 @@ getNewQuestion = () => {
     acceptingAnswers = true
 
 }
-
+// determines if the answer is correct and highlights the answer Green if correct red if wrong 
 choices.forEach(choice => {
     choice.addEventListener('click', e => {
         if(!acceptingAnswers) return;
@@ -98,10 +138,13 @@ choices.forEach(choice => {
             classToApply = 'correct'
         }
 
-
+// adds and removes scores 
         if(classToApply === 'correct') {
             incrementScore(CORRECT_BONUS)
-        } else decreaseScore(WRONG_BONUS)
+        } else {
+            decreaseScore(WRONG_BONUS) ;decreaseTime(MINUS_TIME);
+        }
+        
 
 
         selectedChoice.parentElement.classList.add(classToApply)
@@ -116,7 +159,7 @@ choices.forEach(choice => {
     })
 })
 
-
+// adds and removes from scores and timer. Timer isn't deduction isn't working correctly 
 incrementScore = num => {
     score += num;
     scoreText.innerText = score;
@@ -124,7 +167,38 @@ incrementScore = num => {
 
 decreaseScore = num => {
     score -= num
-    scoreText.innerText = score
+    scoreText.innerText = score    
 }
 
+decreaseTime = num => {
+    seconds -= num 
+    timerElementText.innerText = seconds
+}
+
+
+
+// sets my timer 
+
+function startTimer(){
+    let minutes = Math.round((seconds - 30) / 60);
+    let remainingSeconds = seconds % 60;
+
+    if(remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds;
+    }
+
+    document.getElementById('timer').innerHTML = minutes + ':' + remainingSeconds;
+    
+    if (seconds == 0) {
+        clearInterval(countdownTimer);
+        document.getElementById('timer').innerHTML = "Times Up"; 
+        return window.location.assign('index.html')
+    } else {
+        seconds--;
+    }
+}
+
+let countdownTimer = setInterval('startTimer()', 1000);
+
+//starts the game
 startGame()
