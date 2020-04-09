@@ -142,7 +142,7 @@ choices.forEach(choice => {
         if(classToApply === 'correct') {
             incrementScore(CORRECT_BONUS)
         } else {
-            decreaseScore(WRONG_BONUS) ;decreaseTime(MINUS_TIME);
+            decreaseScore(WRONG_BONUS);
         }
         
 
